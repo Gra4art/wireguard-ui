@@ -22,7 +22,6 @@ var (
 	Token            string
 	AllowConfRequest bool
 	FloodWait        int
-	FloodWaitEnabled bool // Для отключения таймаута в ТГ
 	LogLevel         log.Lvl
 	MTProxyLink      string // ДОБАВИЛИ НАШУ ССЫЛКУ
 
@@ -88,7 +87,7 @@ func Start(initDeps TgBotInitDependencies) (err error) {
 				}
 				floodMessageSent[userid] = struct{}{}
 				_, err := bot.SendMessage(
-					fmt.Sprintf("You can only request your configs once per %d minutes", FloodWait),
+					fmt.Sprintf("Подождите %d секунд, защита от флуда", FloodWait),
 					userid,
 					&echotron.MessageOptions{
 						ReplyToMessageID: update.Message.ID,
@@ -130,7 +129,7 @@ func SendConfig(userid int64, clientName string, confData, qrData []byte, ignore
 	}
 
 	if _, wait := floodWait[userid]; wait && !ignoreFloodWait {
-		return fmt.Errorf("this client already got their config less than %d minutes ago", FloodWait)
+		return fmt.Errorf("Этот клиент будет готов получить конфиг через %d секунд", FloodWait)
 	}
 
 	if !ignoreFloodWait {
@@ -175,7 +174,7 @@ func SendConfig(userid int64, clientName string, confData, qrData []byte, ignore
 }
 
 func updateFloodWait() {
-	thresholdTS := time.Now().Unix() - 60*int64(FloodWait)
+	thresholdTS := time.Now().Unix() - int64(FloodWait)
 	for userid, ts := range floodWait {
 		if ts < thresholdTS {
 			delete(floodWait, userid)
