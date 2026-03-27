@@ -152,7 +152,7 @@ func init() {
 	telegram.AllowConfRequest = flagTelegramAllowConfRequest
 	telegram.FloodWait = flagTelegramFloodWait
 	telegram.LogLevel = lvl
-	telegram.MTProxyLink = util.LookupEnvOrString("MTPROXY_LINK", "")
+	telegram.MTProxyLink = flagMTProxyLink
 
 	// print only if log level is INFO or lower
 	if lvl <= log.INFO {
