@@ -3,6 +3,7 @@
 # wireguard-ui
 
 A web user interface to manage your WireGuard setup.
+beta
 
 ## Features
 
