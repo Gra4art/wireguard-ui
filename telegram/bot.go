@@ -8,6 +8,7 @@ import (
 	"github.com/NicoNex/echotron/v3"
 	"github.com/labstack/gommon/log"
 	"github.com/ngoduykhanh/wireguard-ui/store"
+	"github.com/skip2/go-qrcode"
 )
 
 type SendRequestedConfigsToTelegram func(db store.IStore, userid int64) []string
@@ -21,7 +22,9 @@ var (
 	Token            string
 	AllowConfRequest bool
 	FloodWait        int
+	FloodWaitEnabled bool // Для отключения таймаута в ТГ
 	LogLevel         log.Lvl
+	MTProxyLink      string // ДОБАВИЛИ НАШУ ССЫЛКУ
 
 	Bot      *echotron.API
 	BotMutex sync.RWMutex
@@ -147,6 +150,27 @@ func SendConfig(userid int64, clientName string, confData, qrData []byte, ignore
 		log.Error(err)
 		return fmt.Errorf("unable to send conf file")
 	}
+
+	if MTProxyLink != "" {
+		// Генерируем QR-код (размер 512x512, средний уровень коррекции ошибок)
+		mtQRData, err := qrcode.Encode(MTProxyLink, qrcode.Medium, 512)
+		if err == nil {
+			// Превращаем байты в картинку для Телеграма
+			mtAttachment := echotron.NewInputFileBytes("mtproxy.png", mtQRData)
+
+			// Формируем красивое сообщение (можешь поменять текст)
+			caption := "🚀 Твой MTProxy для обхода блокировок: \n\n" + MTProxyLink
+
+			// Отправляем!
+			_, err = Bot.SendPhoto(mtAttachment, userid, &echotron.PhotoOptions{Caption: caption})
+			if err != nil {
+				log.Errorf("Failed to send MTProxy to user %d: %v", userid, err)
+			}
+		} else {
+			log.Errorf("Failed to generate MTProxy QR: %v", err)
+		}
+	}
+	// --- КОНЕЦ НАШЕГО БЛОКА ---
 	return nil
 }
 

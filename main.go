@@ -150,6 +150,7 @@ func init() {
 	telegram.AllowConfRequest = flagTelegramAllowConfRequest
 	telegram.FloodWait = flagTelegramFloodWait
 	telegram.LogLevel = lvl
+	telegram.MTProxyLink = util.LookupEnvOrString("MTPROXY_LINK", "")
 
 	// print only if log level is INFO or lower
 	if lvl <= log.INFO {
@@ -329,12 +330,20 @@ func initServerConfig(db store.IStore, tmplDir fs.FS) {
 }
 
 func initTelegram(initDeps telegram.TgBotInitDependencies) {
+	// Запускаем в фоновом потоке
 	go func() {
+		attempt := 1
 		for {
 			err := telegram.Start(initDeps)
 			if err == nil {
-				break
+				log.Info("Telegram bot connected successfully!")
+				break // Успех! Выходим из бесконечного цикла
 			}
+
+			// Если ошибка — пишем в лог и СПИМ 5 секунд
+			log.Printf("Telegram connection attempt %d failed: %v. Retrying in 5 seconds...", attempt, err)
+			time.Sleep(5 * time.Second)
+			attempt++
 		}
 	}()
 }
