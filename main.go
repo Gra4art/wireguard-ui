@@ -46,6 +46,7 @@ var (
 	flagEmailFrom                string
 	flagEmailFromName            = "WireGuard UI"
 	flagTelegramToken            string
+	flagMTProxyLink              string
 	flagTelegramAllowConfRequest = false
 	flagTelegramFloodWait        = 60
 	flagSessionSecret            = util.RandomString(32)
@@ -88,6 +89,7 @@ func init() {
 	flag.StringVar(&flagEmailFrom, "email-from", util.LookupEnvOrString("EMAIL_FROM_ADDRESS", flagEmailFrom), "'From' email address.")
 	flag.StringVar(&flagEmailFromName, "email-from-name", util.LookupEnvOrString("EMAIL_FROM_NAME", flagEmailFromName), "'From' email name.")
 	flag.StringVar(&flagTelegramToken, "telegram-token", util.LookupEnvOrString("TELEGRAM_TOKEN", flagTelegramToken), "Telegram bot token for distributing configs to clients.")
+	flag.StringVar(&flagMTProxyLink, "mtproxy-link", util.LookupEnvOrString("MTPROXY_LINK", flagTelegramToken), "MTProxy link for send to clients.")
 	flag.BoolVar(&flagTelegramAllowConfRequest, "telegram-allow-conf-request", util.LookupEnvOrBool("TELEGRAM_ALLOW_CONF_REQUEST", flagTelegramAllowConfRequest), "Allow users to get configs from the bot by sending a message.")
 	flag.IntVar(&flagTelegramFloodWait, "telegram-flood-wait", util.LookupEnvOrInt("TELEGRAM_FLOOD_WAIT", flagTelegramFloodWait), "Time in minutes before the next conf request is processed.")
 	flag.StringVar(&flagWgConfTemplate, "wg-conf-template", util.LookupEnvOrString("WG_CONF_TEMPLATE", flagWgConfTemplate), "Path to custom wg.conf template.")
