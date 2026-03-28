@@ -1,5 +1,9 @@
 package router
 
+import (
+	"github.com/go-playground/validator/v10"
+)
+
 // NewValidator func
 func NewValidator() *Validator {
 	return &Validator{

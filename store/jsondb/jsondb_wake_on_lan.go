@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"path"
 
-	"github.com/ngoduykhanh/wireguard-ui/model"
-	"github.com/ngoduykhanh/wireguard-ui/util"
+	"github.com/gra4art/wireguard-ui/model"
+	"github.com/gra4art/wireguard-ui/util"
 )
 
 func (o *JsonDB) GetWakeOnLanHosts() ([]model.WakeOnLanHost, error) {
